@@ -1,4 +1,5 @@
 <template>
+
     <table class="table">
         <thead class="thead-dark">
             <tr>
@@ -15,7 +16,7 @@
             <tr  v-for="tarea in tareas" :key="tarea.id">
                 <!-- <th scope="row">{{tarea.id}}</th> -->
                 <td>{{tarea.nombre}}</td>
-                <!-- <td>{{tarea.categorias.join(", ")}}</td> -->
+                <td>{{tarea.categorias.join(", ")}}</td>
                 <td>{{tarea.estado}}</td>
                 <td>{{tarea.numero}}</td>
                 <td>
@@ -40,7 +41,8 @@ import { mapState, mapActions } from 'vuex';
             ...mapActions(['eliminarTarea','actualizarTarea'])
         },
         computed:{
-           ...mapState(["tareas"])
+           ...mapState(["tareas"]),
+           
        }
     };
 

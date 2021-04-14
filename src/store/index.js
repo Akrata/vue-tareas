@@ -50,6 +50,10 @@ export default createStore({
         },
     },
     actions: {
+        cerrarSesion({commit}){
+            commit("setUser", null)
+            router.push("/login")
+        },
         async ingresarUsuario({commit}, user){
             try {
                 const res = await fetch(
@@ -101,10 +105,10 @@ export default createStore({
                 console.log(error);
             }
         },
-        async cargarDB({ commit }) {
+        async cargarDB({ commit, state }) {
             try {
                 const res = await fetch(
-                    "https://tareas-api-54066-default-rtdb.firebaseio.com/tareas.json"
+                    `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${state.user.localId}.json?auth=${state.user.idToken}`
                 );
                 const dataDB = await res.json();
 
@@ -119,10 +123,10 @@ export default createStore({
                 console.log(error);
             }
         },
-        async agregarTarea({ commit }, tarea) {
+        async agregarTarea({ commit, state }, tarea) {
             try {
                 const res = await fetch(
-                    `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${tarea.id}.json`,
+                    `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${state.user.localId}/${tarea.id}.json?auth=${state.user.idToken}`,
                     {
                         method: "PUT",
                         headers: {
@@ -137,10 +141,10 @@ export default createStore({
             }
             commit("set", tarea);
         },
-        async eliminarTarea({ commit }, id) {
+        async eliminarTarea({ commit, state }, id) {
             try {
                 await fetch(
-                    `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${id}.json`,
+                    `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${state.user.localId}/${id}.json?auth=${state.user.idToken}`,
                     {
                         method: "DELETE",
                     }
@@ -153,10 +157,10 @@ export default createStore({
         seleccionarTarea({ commit }, id) {
             commit("select", id);
         },
-        async actualizarTarea({ commit }, tarea) {
+        async actualizarTarea({ commit, state }, tarea) {
             try {
                 const res = await fetch(
-                    `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${tarea.id}.json`,
+                    `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${state.user.localId}/${tarea.id}.json?auth=${state.user.idToken}`,
                     {
                         method: "PATCH",
                         headers: {
@@ -173,4 +177,9 @@ export default createStore({
         },
     },
     modules: {},
+    getters:{
+        userAutenticado(state){
+            return !!state.user
+        }
+    }
 });

@@ -31,7 +31,7 @@
             };
         },
         methods: {
-            ...mapActions(['agregarTarea']),
+            ...mapActions(['agregarTarea','cargarDB']),
             procesarFormulario() {
                 if (this.tarea.nombre.trim() === "") {
                     console.log("nombre vacio");
@@ -48,7 +48,11 @@
                     numero: 0,
                 }
             },
+
         },
+        created(){
+            this.cargarDB()
+        }
        
     };
 </script>
