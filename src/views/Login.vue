@@ -1,11 +1,15 @@
 <template>
   <div class="contenedor">
+      <div class="alert alert-danger" v-if="error.message != null">
+          <p>{{error.message}}</p>
+      </div>
         <form @submit.prevent="procesarFormulario">
             <input
                 type="email"
                 class="form-control"
                 placeholder="Email"
                 v-model="email"
+                :class="[error.tipo === 'email' ? 'is-invalid' : '']"
             />
 
             <input
@@ -13,6 +17,7 @@
                 placeholder="Password"
                 class="form-control"
                 v-model="pass1"
+                :class="[error.tipo === 'password' ? 'is-invalid' : '']"
             />
 
             <button type="submit" class="btn btn-success" :disabled="bloquear">
@@ -23,7 +28,7 @@
 </template>
 
 <script>
-    import { mapActions } from "vuex";
+    import { mapActions, mapState } from "vuex";
     export default {
         data() {
             return {
@@ -35,6 +40,9 @@
             ...mapActions(["ingresarUsuario"]),
             procesarFormulario(){
                 this.ingresarUsuario({ email: this.email, password: this.pass1 })
+                if (this.error !== null) {
+                    return
+                }
                 this.email= ""
                 this.pass1= ""
             }
@@ -52,6 +60,7 @@
                 }
                 return true;
             },
+            ...mapState(['error'])
         },
     };
 </script>
