@@ -1,19 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import store from '../store'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: Home,
+    meta:{ requiereAuth:true }
   },
   {
     path: '/editarTarea/:id',
@@ -21,7 +15,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/EditarTarea.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/EditarTarea.vue'),
+    meta:{ requiereAuth:true }
   },
   {
     path: '/registro',
@@ -47,3 +42,16 @@ const router = createRouter({
 })
 
 export default router
+
+router.beforeEach((to,from,next) => {
+  if (to.meta.requiereAuth) {
+    if (store.getters.userAutenticado) {
+      next()
+    }else{
+      alert("Necesitas iniciar sesion para ingresar a esta pagina")
+      next("/login")
+    }
+  }else{
+    next()
+  }
+})

@@ -52,6 +52,7 @@ export default createStore({
     actions: {
         cerrarSesion({commit}){
             commit("setUser", null)
+            localStorage.removeItem("user")
             router.push("/login")
         },
         async ingresarUsuario({commit}, user){
@@ -76,6 +77,7 @@ export default createStore({
                     return console.log(dataDB.error);
                 }
                 commit("loginUser", dataDB);
+                localStorage.setItem("user", JSON.stringify(dataDB))
                 router.push("/");
             } catch (error) {
                 
@@ -100,12 +102,18 @@ export default createStore({
                     return console.log(dataDB.error);
                 }
                 commit("setUser", dataDB);
+                localStorage.setItem("user", JSON.stringify(dataDB))
                 router.push("/");
             } catch (error) {
                 console.log(error);
             }
         },
         async cargarDB({ commit, state }) {
+            if (localStorage.getItem('user')) {
+                commit("setUser", JSON.parse(localStorage.getItem('user')));
+            }else{
+                return commit("setUser", null);
+            }
             try {
                 const res = await fetch(
                     `https://tareas-api-54066-default-rtdb.firebaseio.com/tareas/${state.user.localId}.json?auth=${state.user.idToken}`
@@ -118,7 +126,7 @@ export default createStore({
                 }
 
                 commit("cargarInfo", arrayTareas);
-                console.log(arrayTareas);
+                
             } catch (error) {
                 console.log(error);
             }
